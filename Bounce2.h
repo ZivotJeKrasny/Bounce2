@@ -88,7 +88,7 @@ class Bounce
     uint16_t interval_millis;
     uint8_t state;
     uint8_t pin;
-    unsigned long duration;
+    unsigned long _duration;
     unsigned long lasttimestable_millis;
 
 };

@@ -18,7 +18,7 @@ Bounce::Bounce()
     , state(0)
     , pin(0)
     , lasttimestable_millis(0)
-    , duration(0)
+    , _duration(0)
 {}
 
 void Bounce::attach(int pin) {
@@ -74,7 +74,7 @@ bool Bounce::update()
             // If it is different from last state, set the STATE_CHANGED flag
             if ((bool)(state & _BV(DEBOUNCED_STATE)) != currentState) {
                 previous_millis = millis();
-                duration = previous_millis - lasttimestable_millis;
+                _duration = previous_millis - lasttimestable_millis;
                 lasttimestable_millis = previous_millis;
                 state ^= _BV(DEBOUNCED_STATE);
                 state |= _BV(STATE_CHANGED);
@@ -102,5 +102,5 @@ bool Bounce::fell()
 
 unsigned long Bounce::duration()
 {
-    return this->duration;
+    return this->_duration;
 }
