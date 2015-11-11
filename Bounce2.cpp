@@ -17,11 +17,12 @@ Bounce::Bounce()
     , interval_millis(10)
     , state(0)
     , pin(0)
+    , lasttimestable_millis(0)
+    , duration(0)
 {}
 
 void Bounce::attach(int pin) {
     this->pin = pin;
-    bool read = digitalRead(pin);
     state = 0;
     if (digitalRead(pin)) {
         state = _BV(DEBOUNCED_STATE) | _BV(UNSTABLE_STATE);
@@ -35,7 +36,7 @@ void Bounce::attach(int pin) {
 
 void Bounce::attach(int pin, int mode){
   pinMode(pin, mode);
-  
+
   this->attach(pin);
 }
 
@@ -61,7 +62,7 @@ bool Bounce::update()
 #else
     // Read the state of the switch in a temporary variable.
     bool currentState = digitalRead(pin);
-    state &= ~_BV(STATE_CHANGED);
+    state &= ~_BV(STATE_CHANGED); // state_changed = false
 
     // If the reading is different from last reading, reset the debounce counter
     if ( currentState != (bool)(state & _BV(UNSTABLE_STATE)) ) {
@@ -73,6 +74,8 @@ bool Bounce::update()
             // If it is different from last state, set the STATE_CHANGED flag
             if ((bool)(state & _BV(DEBOUNCED_STATE)) != currentState) {
                 previous_millis = millis();
+                duration = previous_millis - lasttimestable_millis;
+                lasttimestable_millis = previous_millis;
                 state ^= _BV(DEBOUNCED_STATE);
                 state |= _BV(STATE_CHANGED);
             }
@@ -94,5 +97,10 @@ bool Bounce::rose()
 
 bool Bounce::fell()
 {
-    return !( state & _BV(DEBOUNCED_STATE) ) && ( state & _BV(STATE_CHANGED));
+    return !this->rose();
+}
+
+unsigned long Bounce::duration()
+{
+    return this->duration;
 }

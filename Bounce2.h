@@ -47,7 +47,7 @@ class Bounce
 
     // Attach to a pin (and also sets initial state)
     void attach(int pin);
-    
+
     // Attach to a pin (and also sets initial state) and sets pin to mode (INPUT/INPUT_PULLUP/OUTPUT)
     void attach(int pin, int mode);
 
@@ -68,11 +68,29 @@ class Bounce
     // Returns the rising pin state
     bool rose();
 
+
+    // Return the duration of pin state.
+    // _______|¯¯¯¯|____
+    //       t0    t1
+    // duration = t1 -t0
+
+    // _______|¯¯¯¯|______|¯¯|__
+    //       t0    t1    t2  t3
+    // duration_0 = t1 -t0
+    // duration_1 = t2 -t1
+    // duration_2 = t3 -t2
+    // ....
+    unsigned long duration();
+
+
  protected:
     unsigned long previous_millis;
     uint16_t interval_millis;
     uint8_t state;
     uint8_t pin;
+    unsigned long duration;
+    unsigned long lasttimestable_millis;
+
 };
 
 #endif
