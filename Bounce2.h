@@ -32,6 +32,7 @@
 // Uncomment the following line for "LOCK-OUT" debounce method
 //#define BOUNCE_LOCK_OUT
 
+
 // Uncomment the following line for "BOUNCE_WITH_PROMPT_DETECTION" debounce method
 //#define BOUNCE_WITH_PROMPT_DETECTION
 
@@ -40,7 +41,6 @@
 #ifndef _BV
 #define _BV(n) (1<<(n))
 #endif
-
 class Bounce
 {
  public:
@@ -49,7 +49,7 @@ class Bounce
 
     // Attach to a pin (and also sets initial state)
     void attach(int pin);
-    
+
     // Attach to a pin (and also sets initial state) and sets pin to mode (INPUT/INPUT_PULLUP/OUTPUT)
     void attach(int pin, int mode);
 
@@ -69,7 +69,6 @@ class Bounce
 
     // Returns the rising pin state
     bool rose();
-
     // Partial compatibility for programs written with Bounce version 1
     bool risingEdge() { return rose(); }
     bool fallingEdge() { return fell(); }
@@ -78,11 +77,25 @@ class Bounce
         interval(interval_millis);
     }
 
+    // Return the duration of pin state.
+    // _______|¯¯¯¯|____
+    //       t0    t1
+    // duration = t1 -t0
+
+    // _______|¯¯¯¯|______|¯¯|__
+    //       t0    t1    t2  t3
+    // duration_0 = t1 -t0
+    // duration_1 = t2 -t1
+    // duration_2 = t3 -t2
+    // ....
+    unsigned long duration();
+
  protected:
     unsigned long previous_millis;
     uint16_t interval_millis;
     uint8_t state;
     uint8_t pin;
+    unsigned long lasttimestable_millis;
 };
 
 #endif
