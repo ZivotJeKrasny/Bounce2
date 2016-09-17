@@ -49,7 +49,7 @@ class Bounce
 
     // Attach to a pin (and also sets initial state)
     void attach(int pin);
-    
+
     // Attach to a pin (and also sets initial state) and sets pin to mode (INPUT/INPUT_PULLUP/OUTPUT)
     void attach(int pin, int mode);
 
@@ -95,7 +95,6 @@ class Bounce
     uint16_t interval_millis;
     uint8_t state;
     uint8_t pin;
-    unsigned long _duration;
     unsigned long lasttimestable_millis;
 };
 
