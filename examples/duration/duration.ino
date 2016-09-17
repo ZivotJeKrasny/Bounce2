@@ -29,7 +29,7 @@ const int countOfInputButtons = sizeof(inputButton)/sizeof(int);
 Bounce * debouncedInputButton = new Bounce[countOfInputButtons];
 
 
-unsigned long buttonPressTimeStamp;
+unsigned long buttonPressedLastEval;
 
 void setup() {
 
@@ -60,27 +60,25 @@ void loop() {
   // musime kazdy vstup precist a debouncovat. zapamatujeme si, jaka tlacitka byla zmacknuta
   for (int i = 0; i < countOfInputButtons; i++){
     if (debouncedInputButton[i].update()) {
-      cout << "Duration of change: " << debouncedInputButton[i].duration() << "ms" << endl;
+      cout << "Button #'" << i+1 << "' change state to " << (debouncedInputButton[i].read() ? "HIGH":"LOW") << endl; // << debouncedInputButton[i].duration() << "ms" << endl;
       if (debouncedInputButton[i].fell()) {
-        if (pushedButtons.empty()) {
-          firstTimeButtonPressed = currentMillis;
-        }
         pushedButtons.insert(i+1); // at muzeme rozlisit mezi sudym a lichym
-        cout << "Button " << i << " was pressed." << endl;
+      } else {
+        pushedButtons.erase(i+1);
       }
     }
   }
 
   // pokud bylo nejake tlacitko stisknute a uplynulo casove okno, tak jdeme vyhodnotit, co s tim
-  if (!pushedButtons.empty() && currentMillis - firstTimeButtonPressed >= pushedButtonsEvalWindowMillis) {
+  if (!pushedButtons.empty() && currentMillis - buttonPressedLastEval >= pushedButtonsEvalWindowMillis) {
+    buttonPressedLastEval = currentMillis;
     // for debug we send what buttons was pressed
-    cout << "This buttons was pressed during " << pushedButtonsEvalWindowMillis << "ms window: ";
+    cout << "This buttons is pressed: ";
     for (set<int>::iterator it=pushedButtons.begin(); it!=pushedButtons.end(); ++it) {
-      cout << ", " << *it;
+      cout << *it << "[" << debouncedInputButton[*it-1].duration() << " ms], " ;
     }
     cout << endl;
     // -- enddebug
-    pushedButtons.clear();
   }
 
 }

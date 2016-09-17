@@ -130,5 +130,5 @@ bool Bounce::fell()
 
 unsigned long Bounce::duration()
 {
-    return this->read() ? millis() - this->lasttimestable_millis : 0;
+    return millis() - this->lasttimestable_millis;
 }
